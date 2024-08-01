@@ -28,7 +28,7 @@ return {
                 mapping = cmp.mapping.preset.insert({
                     ['<C-b>'] = cmp.mapping.scroll_docs(-4),
                     ['<C-f>'] = cmp.mapping.scroll_docs(4),
-                    ['<C-Space>'] = cmp.mapping.complete(),
+                    ['<C-c>'] = cmp.mapping.complete(),
                     ['<C-e>'] = cmp.mapping.abort(),
                     ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
                     ['<Tab>'] = cmp.mapping(cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }), { 'i', 'c' }),
@@ -41,6 +41,15 @@ return {
                         { name = 'buffer' },
                     })
             })
+
+            require("luasnip.loaders.from_vscode").lazy_load()
+            local ls = require("luasnip")
+            vim.keymap.set({"i"}, "<C-K>", function() ls.expand() end, {silent = true})
+            vim.keymap.set({"i", "s"}, "<C-L>", function() ls.jump( 1) end, {silent = true})
+            vim.keymap.set({"i", "s"}, "<C-J>", function() ls.jump(-1) end, {silent = true})
+
+            -- Fixing nvim-cmp bug, where command completion is not working
+            vim.keymap.set('c', '<tab>', '<C-z>', { silent = false })
         end
     }
 }
