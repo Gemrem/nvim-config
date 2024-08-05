@@ -45,8 +45,8 @@ return {
             require("luasnip.loaders.from_vscode").lazy_load()
             local ls = require("luasnip")
             vim.keymap.set({"i"}, "<C-K>", function() ls.expand() end, {silent = true})
-            vim.keymap.set({"i", "s"}, "<C-L>", function() ls.jump( 1) end, {silent = true})
-            vim.keymap.set({"i", "s"}, "<C-J>", function() ls.jump(-1) end, {silent = true})
+            vim.keymap.set({"i", "s"}, "<Tab>", function() ls.jump( 1) end, {silent = true})
+            vim.keymap.set({"i", "s"}, "<S-Tab>", function() ls.jump(-1) end, {silent = true})
 
             -- Fixing nvim-cmp bug, where command completion is not working
             vim.keymap.set('c', '<tab>', '<C-z>', { silent = false })
