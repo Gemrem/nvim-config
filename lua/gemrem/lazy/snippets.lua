@@ -12,6 +12,7 @@ return {
             "L3MON4D3/LuaSnip",
         },
         config = function()
+            local luasnip = require("luasnip")
             local cmp = require("cmp")
             cmp.setup({
                 snippet = {
@@ -31,8 +32,27 @@ return {
                     ['<C-c>'] = cmp.mapping.complete(),
                     ['<C-e>'] = cmp.mapping.abort(),
                     ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
-                    ['<Tab>'] = cmp.mapping(cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }), { 'i', 'c' }),
-                    ['<S-Tab>'] = cmp.mapping(cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }), { 'i', 'c' }),
+
+                    ["<Tab>"] = cmp.mapping(function(fallback)
+                        if cmp.visible() then
+                            cmp.select_next_item()
+                        elseif luasnip.locally_jumpable(1) then
+                            luasnip.jump(1)
+                        else
+                            fallback()
+                        end
+                    end, { "i", "s" }),
+
+                    ["<S-Tab>"] = cmp.mapping(function(fallback)
+                        if cmp.visible() then
+                            cmp.select_prev_item()
+                        elseif luasnip.locally_jumpable(-1) then
+                            luasnip.jump(-1)
+                        else
+                            fallback()
+                        end
+                    end, { "i", "s" }),
+
                 }),
                 sources = cmp.config.sources({
                     { name = 'nvim_lsp' },
@@ -45,9 +65,6 @@ return {
             require("luasnip.loaders.from_vscode").lazy_load()
             local ls = require("luasnip")
             vim.keymap.set({"i"}, "<C-K>", function() ls.expand() end, {silent = true})
-            vim.keymap.set({"i", "s"}, "<Tab>", function() ls.jump( 1) end, {silent = true})
-            vim.keymap.set({"i", "s"}, "<S-Tab>", function() ls.jump(-1) end, {silent = true})
-
             -- Fixing nvim-cmp bug, where command completion is not working
             vim.keymap.set('c', '<tab>', '<C-z>', { silent = false })
         end
